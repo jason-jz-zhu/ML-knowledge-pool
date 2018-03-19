@@ -5,6 +5,12 @@ Created on Fri Mar 16 14:41:54 2018
 @author: Jiazhen
 """
 
+# feature selection,
+# feature engineering,
+# model selection,
+# model tuning
+
+
 # split data into train and test
 from sklearn.model_selection import train_test_split
 
