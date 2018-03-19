@@ -4,10 +4,29 @@ Created on Fri Mar 16 16:49:06 2018
 
 @author: Jiazhen
 """
+#  Generating Training and Testing Sets
+import random
+from numpy.random import permutation
+
+# Randomly shuffle the index of nba
+random_indices = permutation(nba.index)
+# Set a cutoff for how many items we want in the test set (in this case 1/3 of the items)
+test_cutoff = math.floor(len(nba)/3)
+# Generate the test set by taking the first 1/3 of the randomly shuffled indices
+test = nba.loc[random_indices[1:test_cutoff]]
+# Generate the train set with the rest of the data
+train = nba.loc[random_indices[test_cutoff:]]
+
+
+
+
+# Normalizing Columns
+nba_numeric = nba[distance_columns]
+nba_normalized = (nba_numeric - nba_numeric.mean()) / nba_numeric.std()
 
 # convert continuous to categorial
-# Binning is when you take a continuous feature, 
-# like the fare a passenger paid for their ticket, 
+# Binning is when you take a continuous feature,
+# like the fare a passenger paid for their ticket,
 # and separate it out into several ranges (or 'bins'),
 # turning it into a categorical variable.
 def process_age(df,cut_points,label_names):
@@ -32,6 +51,13 @@ def create_dummies(df,column_name):
 
 train = create_dummies(train,"Pclass")
 test = create_dummies(test,"Pclass")
+
+# Ensure the test data is encoded in the same manner as the training data with the align command:
+one_hot_encoded_training_predictors = pd.get_dummies(train_predictors)
+one_hot_encoded_test_predictors = pd.get_dummies(test_predictors)
+final_train, final_test = one_hot_encoded_training_predictors.align(one_hot_encoded_test_predictors,
+                                                                    join='left',
+                                                                    axis=1)
 
 # rescale
 from sklearn.preprocessing import minmax_scale
@@ -90,7 +116,7 @@ import seaborn as sns
 
 def plot_correlation_heatmap(df):
     corr = df.corr()
-    
+
     sns.set(style="white")
     mask = np.zeros_like(corr, dtype=np.bool)
     mask[np.triu_indices_from(mask)] = True
@@ -102,7 +128,7 @@ def plot_correlation_heatmap(df):
     sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0,
             square=True, linewidths=.5, cbar_kws={"shrink": .5})
     plt.show()
-    
+
 #  recursive feature elimination with cross-validation
 from sklearn.feature_selection import RFECV
 lr = LogisticRegression()

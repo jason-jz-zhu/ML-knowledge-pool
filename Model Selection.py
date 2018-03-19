@@ -40,3 +40,7 @@ grid.fit(all_X, all_y)
 
 best_params = grid.best_params_
 best_score = grid.best_score_
+
+# mse
+actual = test[y_column]
+mse = (((predictions - actual) ** 2).sum()) / len(predictions)
